@@ -5,6 +5,9 @@ const birth = birthWrapper.firstElementChild;
 const email = emailWrapper.firstElementChild;
 const password = passwordWrapper.firstElementChild;
 const confirmPassword = confirmPasswordWrapper.firstElementChild;
+
+const passwordError = 'Password must have at least 8 symbols, at least 1 capital letter, at least one digit (1-9), at least 1 special character (!@#$%)';
+
 let isSubmitable = true;
 
 inputs.forEach(inputs => inputs.value = '');
@@ -17,30 +20,29 @@ inputs.forEach(input => input.addEventListener('blur', () => {
   !input.value && input.nextElementSibling.classList.remove('label_focused');
 }));
 
-const errorOutput = (input, message) => {
+const inputCheck = (input, message, classToToggle) => {
   input.addEventListener('input', () => {
-    if(!input.checkValidity()) {
+    if (!input.checkValidity()) {
       input.nextElementSibling.nextElementSibling.innerText = message;
+      isSubmitable = false;
+      if (classToToggle) {
+        password.nextElementSibling.nextElementSibling.classList.add(classToToggle);
+      }
     } else {
       input.nextElementSibling.nextElementSibling.innerText = '';
+      isSubmitable = true;
+      if (classToToggle) {
+        password.nextElementSibling.nextElementSibling.classList.remove(classToToggle);
+      }
     }
   });
 };
 
-errorOutput(userName, 'Minimum 2 symbols.');
-errorOutput(surname, 'Minimum 2 symbols.');
-errorOutput(birth, 'Maximum date - today.');
-errorOutput(email, 'Invalid email.');
-
-password.addEventListener('input', () => {
-  if (!password.checkValidity()) {
-    password.nextElementSibling.nextElementSibling.classList.add('error__password');
-    password.nextElementSibling.nextElementSibling.innerText = 'Password must have at least 8 symbols, at least 1 capital letter, at least one digit (1-9), at least 1 special character (!@#$%)';
-  } else {
-    password.nextElementSibling.nextElementSibling.innerText = '';
-    password.nextElementSibling.nextElementSibling.classList.remove('error__password');
-  }
-});
+inputCheck(userName, 'Minimum 2 symbols.');
+inputCheck(surname, 'Minimum 2 symbols.');
+inputCheck(birth, 'Maximum date - today.');
+inputCheck(email, 'Invalid email.');
+inputCheck(password, passwordError, 'error__password')
 
 confirmPassword.addEventListener('input', () => {
   if (password.value !== confirmPassword.value) {
@@ -49,6 +51,15 @@ confirmPassword.addEventListener('input', () => {
     confirmPassword.nextElementSibling.nextElementSibling.innerText = '';
   }
 });
+
+const isSubmitableCheck = (inputs) => {
+  for (let i = 0; i < inputs.length; i++) {
+    if (inputs[i].nextElementSibling.nextElementSibling.innerText) {
+      return false;
+    }
+  }
+  return true;
+};
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -60,7 +71,13 @@ form.addEventListener('submit', (e) => {
     }
   });
 
-  if (!isSubmitable) return;
+  if (!isSubmitable) {
+    return;
+  }
+
+  if (!isSubmitableCheck(inputs)) {
+    return;
+  }
 
   const formData = new FormData();
   formData.append('name', userName.value);
