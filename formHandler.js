@@ -8,8 +8,6 @@ const confirmPassword = confirmPasswordWrapper.firstElementChild;
 
 const passwordError = 'Password must have at least 8 symbols, at least 1 capital letter, at least one digit (1-9), at least 1 special character (!@#$%)';
 
-let isSubmitable = true;
-
 inputs.forEach(inputs => inputs.value = '');
 
 inputs.forEach(input => input.addEventListener('focus', () => {
@@ -67,13 +65,8 @@ form.addEventListener('submit', (e) => {
   inputs.forEach(input => {
     if (!input.value) {
       input.nextElementSibling.nextElementSibling.innerText = 'Must be filled.';
-      isSubmitable = false;
     }
   });
-
-  if (!isSubmitable) {
-    return;
-  }
 
   if (!isSubmitableCheck(inputs)) {
     return;
