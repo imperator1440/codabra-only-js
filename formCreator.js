@@ -30,7 +30,9 @@ const createInputWrapper = (labelText, inputName, inputType, isRequired, minLeng
     input.setAttribute('maxlength', maxLength);
   }
   if (max) {
-    input.setAttribute('max', max);
+    const maxDate = new Date();
+    maxDate.setHours(23, 59, 59, 999);
+    input.setAttribute('max', maxDate.toISOString().split("T")[0]); 
   }
   if (pattern) {
     input.setAttribute('pattern', pattern);
@@ -54,7 +56,7 @@ formElementsContainer.appendChild(userNameWrapper);
 const surnameWrapper = createInputWrapper('Surname', 'surname', 'text', true, 2, 25);
 formElementsContainer.appendChild(surnameWrapper);
 
-const birthWrapper = createInputWrapper('Date of Birth', 'birth', 'date', true, undefined, undefined, '2023-03-31');
+const birthWrapper = createInputWrapper('Date of Birth', 'birth', 'date', true, undefined, undefined, true);
 birthWrapper.firstElementChild.nextElementSibling.classList.add('lable__birth');
 formElementsContainer.appendChild(birthWrapper);
 
